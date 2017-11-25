@@ -61,30 +61,30 @@ func nextView(g *gocui.Gui, v *gocui.View) error {
 
 func layout(g *gocui.Gui) error {
 	maxX, maxY := g.Size()
-	if v, err := g.SetView("v1", 0, 0, maxX/5-1, maxY-1); err != nil {
+	if v, err := g.SetView("v1", 0, 0, maxX/3-1, maxY-1); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		v.Title = "[v1] user"
+		v.Title = "[v1] statistics"
 		v.Wrap = true
 		if _, err = setCurrentViewOnTop(g, "v1"); err != nil {
 			return err
 		}
 	}
 
-	if v, err := g.SetView("v2", maxX/5-1, 0, maxX-1, maxY/7-1); err != nil {
+	if v, err := g.SetView("v2", maxX/3-1, 0, maxX-1, maxY/6-1); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		v.Title = "[v2] node"
+		v.Title = "[v2] game info"
 		v.Wrap = true
 		v.Autoscroll = true
 	}
-	if v, err := g.SetView("v3", maxX/5, maxY/7, maxX-1, maxY-1); err != nil {
+	if v, err := g.SetView("v3", maxX/3, maxY/6, maxX-1, maxY-1); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		v.Title = "[v3] content"
+		v.Title = "[v3] live record"
 		v.Wrap = true
 		v.Autoscroll = true
 	}
