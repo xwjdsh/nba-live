@@ -5,7 +5,6 @@ import (
 )
 
 func newSelect(games []*Game) (int, error) {
-
 	templates := &promptui.SelectTemplates{
 		Label:    "{{ . }}",
 		Help:     "使用 [↑/k],[↓/j] 选择比赛",
@@ -20,7 +19,7 @@ func newSelect(games []*Game) (int, error) {
 		Label:     "",
 		Items:     games,
 		Templates: templates,
-		Size:      4,
+		Size:      10,
 	}
 
 	i, _, err := prompt.Run()

@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -29,6 +30,7 @@ func getGames() ([]*Game, error) {
 		games := []*Game{}
 		for _, game := range gameResp.List {
 			if game.Type == "basketball" {
+				game.PeriodCn = strings.Replace(game.PeriodCn, "\n", " ", -1)
 				games = append(games, game)
 			}
 		}
