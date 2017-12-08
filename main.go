@@ -2,95 +2,30 @@ package main
 
 import (
 	"log"
-
-	"github.com/jroimartin/gocui"
-)
-
-var (
-	viewArr = []string{"v1", "v2", "v3"}
-	active  int
+	"os"
 )
 
 func main() {
-	newGUI()
-}
-
-func newGUI() {
-	g, err := gocui.NewGui(gocui.OutputNormal)
+	games := []*Game{
+		&Game{
+			HomeTeam:   "骑士",
+			VisitTeam:  "勇士",
+			HomeScore:  "100",
+			VisitScore: "90",
+			PeriodCn:   "第4节 01:30",
+		},
+		&Game{
+			HomeTeam:   "凯尔特人",
+			VisitTeam:  "公牛",
+			HomeScore:  "80",
+			VisitScore: "88",
+			PeriodCn:   "第3节 03:30",
+		},
+	}
+	i, err := newSelect(games)
 	if err != nil {
-		log.Panicln(err)
+		os.Exit(1)
 	}
-	defer g.Close()
-
-	g.Highlight = true
-	g.Cursor = true
-	g.SelFgColor = gocui.ColorCyan
-
-	g.SetManagerFunc(layout)
-
-	if err := g.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, quit); err != nil {
-		log.Panicln(err)
-	}
-	if err := g.SetKeybinding("", gocui.KeyTab, gocui.ModNone, nextView); err != nil {
-		log.Panicln(err)
-	}
-
-	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
-		log.Panicln(err)
-	}
-}
-
-func setCurrentViewOnTop(g *gocui.Gui, name string) (*gocui.View, error) {
-	if _, err := g.SetCurrentView(name); err != nil {
-		return nil, err
-	}
-	return g.SetViewOnTop(name)
-}
-
-func nextView(g *gocui.Gui, v *gocui.View) error {
-	nextIndex := (active + 1) % len(viewArr)
-	name := viewArr[nextIndex]
-
-	if _, err := setCurrentViewOnTop(g, name); err != nil {
-		return err
-	}
-
-	active = nextIndex
-	return nil
-}
-
-func layout(g *gocui.Gui) error {
-	maxX, maxY := g.Size()
-	if v, err := g.SetView("v1", 0, 0, maxX/3-1, maxY-1); err != nil {
-		if err != gocui.ErrUnknownView {
-			return err
-		}
-		v.Title = "[v1] statistics"
-		v.Wrap = true
-		if _, err = setCurrentViewOnTop(g, "v1"); err != nil {
-			return err
-		}
-	}
-
-	if v, err := g.SetView("v2", maxX/3-1, 0, maxX-1, maxY/6-1); err != nil {
-		if err != gocui.ErrUnknownView {
-			return err
-		}
-		v.Title = "[v2] game info"
-		v.Wrap = true
-		v.Autoscroll = true
-	}
-	if v, err := g.SetView("v3", maxX/3, maxY/6, maxX-1, maxY-1); err != nil {
-		if err != gocui.ErrUnknownView {
-			return err
-		}
-		v.Title = "[v3] live record"
-		v.Wrap = true
-		v.Autoscroll = true
-	}
-	return nil
-}
-
-func quit(g *gocui.Gui, v *gocui.View) error {
-	return gocui.ErrQuit
+	log.Println(i)
+	newUI()
 }
