@@ -1,21 +1,23 @@
 package main
 
 import (
-	"log"
-	"os"
-
 	"github.com/fatih/color"
+)
+
+const (
+	SUCCESS = "\u2714"
+	ERROR   = "\u2716"
 )
 
 func main() {
 	games, err := getGames()
 	if err != nil {
-		color.Red("\u2716 获取比赛数据错误:", err.Error())
+		color.Red("%s 获取比赛数据错误:%s", ERROR, err.Error())
 		return
 	}
 
 	if len(games) == 0 {
-		color.Green("\u2714 暂无比赛数据")
+		color.Green("%s 暂无比赛数据", SUCCESS)
 		return
 	}
 
@@ -37,8 +39,8 @@ func main() {
 	//}
 	i, err := newSelect(games)
 	if err != nil {
-		os.Exit(1)
+		color.Red("%s 选择比赛错误:%s", ERROR, err.Error())
+		return
 	}
-	log.Println(i)
-	newUI()
+	newUI(games[i])
 }
