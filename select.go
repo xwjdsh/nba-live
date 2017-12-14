@@ -1,14 +1,13 @@
 package main
 
-import (
-	"github.com/xwjdsh/promptui"
-)
+import "github.com/manifoldco/promptui"
 
 func newSelect(games []*Game) (int, error) {
 	templates := &promptui.SelectTemplates{
 		Label:    "{{ . }}",
 		Help:     "使用 [↑/k],[↓/j] 选择比赛",
-		Active:   "\U0001F336  {{ .HomeTeam | cyan }} {{ `VS` | cyan }} {{ .VisitTeam | cyan }}",
+		Active:   "\U0001F3C0  {{ .HomeTeam | cyan }} {{ `VS` | cyan }} {{ .VisitTeam | cyan }}",
+		Selected: "\U0001F3C0  {{ .HomeTeam | cyan }} {{ `VS` | cyan }} {{ .VisitTeam | cyan }}",
 		Inactive: "    {{ .HomeTeam }} VS {{ .VisitTeam }}",
 		Details: `
 --------- {{ .PeriodCn }} ----------

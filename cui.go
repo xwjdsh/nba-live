@@ -3,22 +3,24 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"log"
+	"time"
 
 	figure "github.com/common-nighthawk/go-figure"
 	tui "github.com/marcusolsson/tui-go"
 )
 
-func newUI(game *Game) {
+var (
+	scoreChan = make(chan *GameInfo)
+	overChan  = make(chan bool)
+)
 
+func newUI(game *Game) {
 	grid := tui.NewGrid(0, 0)
 
-	homeBuf := new(bytes.Buffer)
-	figure.Write(homeBuf, figure.NewFigure(game.HomeScore.(string), "slant", true))
-	visitBuf := new(bytes.Buffer)
-	figure.Write(visitBuf, figure.NewFigure(game.VisitScore.(string), "slant", true))
-
-	homeLabel := tui.NewLabel(homeBuf.String())
-	visitLabel := tui.NewLabel(visitBuf.String())
+	homeScore, visitScore := drawScore(game.HomeScore.(string), game.VisitScore.(string))
+	homeLabel := tui.NewLabel(homeScore)
+	visitLabel := tui.NewLabel(visitScore)
 	homeLabel.SetStyleName("score")
 	visitLabel.SetStyleName("score")
 
@@ -40,8 +42,60 @@ func newUI(game *Game) {
 	ui := tui.New(root)
 	ui.SetTheme(theme)
 	ui.SetKeybinding("Esc", func() { ui.Quit() })
-
+	ui.SetKeybinding("q", func() { ui.Quit() })
+	go update(ui, homeLabel, visitLabel)
+	go fetch(game.ID)
 	if err := ui.Run(); err != nil {
 		panic(err)
 	}
+}
+
+func update(ui tui.UI, homeLabel, visitLabel *tui.Label) {
+	for {
+		select {
+		case info := <-scoreChan:
+			if info != nil {
+				ui.Update(func() {
+					homeScore, visitScore := drawScore(info.HomeScore, info.VisitScore)
+					homeLabel.SetText(homeScore)
+					visitLabel.SetText(visitScore)
+				})
+			}
+		case <-overChan:
+			close(scoreChan)
+			return
+		}
+	}
+}
+
+func fetch(gameId string) {
+	lastMaxSid := 0
+	for {
+		maxSid, err := getMaxsid(gameId)
+		if err != nil {
+			log.Println("get max sid error:", err.Error())
+			time.Sleep(3 * time.Second)
+			continue
+		}
+		if maxSid > lastMaxSid {
+			gameInfo, err := getGameInfo(gameId)
+			if err != nil {
+				log.Println("get game info error:", err.Error())
+				time.Sleep(3 * time.Second)
+				continue
+			}
+			lastMaxSid = maxSid
+			time.Sleep(2 * time.Second)
+			scoreChan <- gameInfo
+		}
+	}
+}
+
+func drawScore(homeScore, visitScore string) (string, string) {
+	homeBuf := new(bytes.Buffer)
+	figure.Write(homeBuf, figure.NewFigure(homeScore, "slant", true))
+	visitBuf := new(bytes.Buffer)
+	figure.Write(visitBuf, figure.NewFigure(visitScore, "slant", true))
+
+	return homeBuf.String(), visitBuf.String()
 }
