@@ -11,8 +11,8 @@ import (
 )
 
 var (
-	scoreChan = make(chan *GameInfo)
-	overChan  = make(chan bool)
+	updateChan = make(chan *GameInfoAndLive)
+	overChan   = make(chan bool)
 )
 
 func newUI(game *Game) {
@@ -31,9 +31,10 @@ func newUI(game *Game) {
 	scoreBox.SetBorder(true)
 
 	liveBox := tui.NewVBox()
-	liveBox.SetTitle("直播")
+	liveBox.SetTitle(liveTitle(game.PeriodCn))
 	liveBox.SetBorder(true)
-	liveBox.SetSizePolicy(tui.Maximum, tui.Expanding)
+	liveBox.SetSizePolicy(tui.Minimum, tui.Expanding)
+	liveBox.Append(tui.NewSpacer())
 
 	theme := tui.NewTheme()
 	theme.SetStyle("label.score", tui.Style{Fg: tui.ColorCyan, Bold: true})
@@ -43,26 +44,44 @@ func newUI(game *Game) {
 	ui.SetTheme(theme)
 	ui.SetKeybinding("Esc", func() { ui.Quit() })
 	ui.SetKeybinding("q", func() { ui.Quit() })
-	go update(ui, homeLabel, visitLabel)
+	go update(ui, homeLabel, visitLabel, liveBox)
 	go fetch(game.ID)
 	if err := ui.Run(); err != nil {
 		panic(err)
 	}
 }
 
-func update(ui tui.UI, homeLabel, visitLabel *tui.Label) {
+func update(ui tui.UI, homeLabel, visitLabel *tui.Label, liveBox *tui.Box) {
 	for {
 		select {
-		case info := <-scoreChan:
-			if info != nil {
-				ui.Update(func() {
+		case data := <-updateChan:
+			info, records := data.Info, data.LiveRecords
+			ui.Update(func() {
+				if info != nil {
 					homeScore, visitScore := drawScore(info.HomeScore, info.VisitScore)
 					homeLabel.SetText(homeScore)
 					visitLabel.SetText(visitScore)
-				})
-			}
+					liveBox.SetTitle(liveTitle(info.PeriodCn))
+				}
+				if records != nil {
+					for _, record := range records {
+						var liveTime string
+						if lt, err := time.Parse("2006-01-02 15:04:05", record.LiveTime); err == nil {
+							liveTime = lt.Format("15:04")
+						}
+
+						textLable := tui.NewLabel(fmt.Sprintf("%s(%s): %s", record.UserChn, liveTime, record.LiveText))
+						textLable.SetWordWrap(true)
+						newBox := tui.NewHBox(
+							textLable,
+							tui.NewSpacer(),
+						)
+						liveBox.Prepend(newBox)
+					}
+				}
+			})
 		case <-overChan:
-			close(scoreChan)
+			close(updateChan)
 			return
 		}
 	}
@@ -74,20 +93,25 @@ func fetch(gameId string) {
 		maxSid, err := getMaxsid(gameId)
 		if err != nil {
 			log.Println("get max sid error:", err.Error())
-			time.Sleep(3 * time.Second)
+			time.Sleep(2 * time.Second)
 			continue
 		}
 		if maxSid > lastMaxSid {
-			gameInfo, err := getGameInfo(gameId)
-			if err != nil {
-				log.Println("get game info error:", err.Error())
-				time.Sleep(3 * time.Second)
-				continue
-			}
+			gameInfo, _ := getGameInfo(gameId)
+			//if err != nil {
+			//log.Println("get game info error:", err.Error())
+			//}
+			liveRecords, _ := getLiveRecord(gameId, maxSid)
+			//if err != nil {
+			//log.Println("get game live records error:", err.Error())
+			//}
 			lastMaxSid = maxSid
-			time.Sleep(2 * time.Second)
-			scoreChan <- gameInfo
+			updateChan <- &GameInfoAndLive{
+				Info:        gameInfo,
+				LiveRecords: liveRecords,
+			}
 		}
+		time.Sleep(1 * time.Second)
 	}
 }
 
@@ -98,4 +122,8 @@ func drawScore(homeScore, visitScore string) (string, string) {
 	figure.Write(visitBuf, figure.NewFigure(visitScore, "slant", true))
 
 	return homeBuf.String(), visitBuf.String()
+}
+
+func liveTitle(periodCn string) string {
+	return fmt.Sprintf("直播 (%s)", periodCn)
 }

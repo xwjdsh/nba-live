@@ -72,3 +72,8 @@ type GameLiveRecord struct {
 	PidText     string `json:"pid_text"`
 	ImgMode     string `json:"img_mode"`
 }
+
+type GameInfoAndLive struct {
+	Info        *GameInfo
+	LiveRecords []*GameLiveRecord
+}
