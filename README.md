@@ -1,3 +1,3 @@
 # nba-live
 
-Develop in progress...
+NBA live in terminal
