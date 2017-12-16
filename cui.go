@@ -12,7 +12,6 @@ import (
 
 var (
 	updateChan = make(chan *GameInfoAndLive)
-	overChan   = make(chan bool)
 )
 
 func newUI(game *Game) {
@@ -30,11 +29,11 @@ func newUI(game *Game) {
 	scoreBox.SetTitle(fmt.Sprintf("%s VS %s", game.HomeTeam, game.VisitTeam))
 	scoreBox.SetBorder(true)
 
-	liveBox := tui.NewVBox()
+	liveLabel := tui.NewLabel("")
+	liveBox := tui.NewVBox(tui.NewScrollArea(liveLabel))
 	liveBox.SetTitle(liveTitle(game.PeriodCn))
 	liveBox.SetBorder(true)
-	liveBox.SetSizePolicy(tui.Minimum, tui.Expanding)
-	liveBox.Append(tui.NewSpacer())
+	liveBox.SetSizePolicy(tui.Preferred, tui.Expanding)
 
 	theme := tui.NewTheme()
 	theme.SetStyle("label.score", tui.Style{Fg: tui.ColorCyan, Bold: true})
@@ -44,14 +43,16 @@ func newUI(game *Game) {
 	ui.SetTheme(theme)
 	ui.SetKeybinding("Esc", func() { ui.Quit() })
 	ui.SetKeybinding("q", func() { ui.Quit() })
-	go update(ui, homeLabel, visitLabel, liveBox)
+
+	go update(ui, homeLabel, visitLabel, liveLabel, liveBox)
 	go fetch(game.ID)
 	if err := ui.Run(); err != nil {
 		panic(err)
 	}
 }
 
-func update(ui tui.UI, homeLabel, visitLabel *tui.Label, liveBox *tui.Box) {
+func update(ui tui.UI, homeLabel, visitLabel, liveLabel *tui.Label, liveBox *tui.Box) {
+	defer close(updateChan)
 	for {
 		select {
 		case data := <-updateChan:
@@ -69,20 +70,11 @@ func update(ui tui.UI, homeLabel, visitLabel *tui.Label, liveBox *tui.Box) {
 						if lt, err := time.Parse("2006-01-02 15:04:05", record.LiveTime); err == nil {
 							liveTime = lt.Format("15:04")
 						}
-
-						textLable := tui.NewLabel(fmt.Sprintf("%s(%s): %s", record.UserChn, liveTime, record.LiveText))
-						textLable.SetWordWrap(true)
-						newBox := tui.NewHBox(
-							textLable,
-							tui.NewSpacer(),
-						)
-						liveBox.Prepend(newBox)
+						text := fmt.Sprintf("%s(%s): %s", record.UserChn, liveTime, record.LiveText)
+						liveLabel.SetText(text + "\n" + liveLabel.Text())
 					}
 				}
 			})
-		case <-overChan:
-			close(updateChan)
-			return
 		}
 	}
 }
