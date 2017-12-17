@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"log"
 	"time"
 
 	figure "github.com/common-nighthawk/go-figure"
@@ -84,7 +83,7 @@ func fetch(gameId string) {
 	for {
 		maxSid, err := getMaxsid(gameId)
 		if err != nil {
-			log.Println("get max sid error:", err.Error())
+			//log.Println("get max sid error:", err.Error())
 			time.Sleep(2 * time.Second)
 			continue
 		}
