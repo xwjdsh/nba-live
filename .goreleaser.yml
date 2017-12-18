@@ -1,0 +1,28 @@
+# Build customization
+builds:
+  - binary: nba-live
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+
+brew:
+  github:
+    owner: xwjdsh
+    name: homebrew-tap
+
+  commit_author:
+    name: Wendell Sun
+    email: iwendellsun@gmail.com
+
+  homepage: "https://github.com/xwjdsh/nba-live"
+  description: "Watch NBA games in the terminal,the content in Chinese only."
+
+  install: |
+    bin.install "nba-live"
+
+release:
+  github:
+    owner: xwjdsh
+    name: nba-live
