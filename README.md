@@ -18,7 +18,7 @@ nba-live
 #### Docker
 ```shell
 docker pull wendellsun/nba-live
-docker run -it wendellsun/nba-live
+docker run -it --rm wendellsun/nba-live
 ```
 #### Manual
 从[releases](https://github.com/xwjdsh/nba-live/releases)下载可执行文件并将其放到`PATH`环境变量中，然后在终端输入`nba-live`运行。
