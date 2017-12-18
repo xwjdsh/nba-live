@@ -42,6 +42,8 @@ func newUI(game *Game) {
 	ui.SetTheme(theme)
 	ui.SetKeybinding("Esc", func() { ui.Quit() })
 	ui.SetKeybinding("q", func() { ui.Quit() })
+	ui.SetKeybinding("Ctrl+C", func() { ui.Quit() })
+	ui.SetKeybinding("Ctrl+D", func() { ui.Quit() })
 
 	go update(ui, homeLabel, visitLabel, liveLabel, liveBox)
 	go fetch(game.ID)

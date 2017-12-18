@@ -1,5 +1,6 @@
 package main
 
+// Game game list
 type Game struct {
 	ID         string      `json:"id"`
 	Sdate      string      `json:"sdate"`
@@ -19,6 +20,7 @@ type Game struct {
 	//BigScore2     string `json:"big_score_2"`
 }
 
+// GameInfo game basic info
 type GameInfo struct {
 	ID             string   `json:"id"`
 	Sdate          string   `json:"sdate"`
@@ -46,6 +48,7 @@ type GameInfo struct {
 	BigScore2      string   `json:"big_score_2"`
 }
 
+// GameLiveRecord game live record data
 type GameLiveRecord struct {
 	LiveID      string `json:"live_id"`
 	RoomID      string `json:"room_id"`
@@ -73,6 +76,7 @@ type GameLiveRecord struct {
 	ImgMode     string `json:"img_mode"`
 }
 
+// GameInfoAndLive wrapper game info and live record data
 type GameInfoAndLive struct {
 	Info        *GameInfo
 	LiveRecords []*GameLiveRecord
