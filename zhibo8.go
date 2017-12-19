@@ -29,7 +29,7 @@ func getGames() ([]*Game, error) {
 	if err == nil {
 		games := []*Game{}
 		for _, game := range gameResp.List {
-			if game.Type == "basketball" {
+			if game.PeriodCn != "" && game.Type == "basketball" {
 				game.PeriodCn = strings.Replace(game.PeriodCn, "\n", " ", -1)
 				games = append(games, game)
 			}

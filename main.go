@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 )
 
@@ -11,7 +12,18 @@ const (
 	IconBad = "✗"
 )
 
+var version = "v0.1.0"
+
 func main() {
+	versionFlag := flag.Bool("v", false, "display version info")
+	flag.Parse()
+	if *versionFlag {
+		fmt.Println(green(logo))
+		fmt.Printf(source, version)
+		return
+	}
+
+	fmt.Println(green(logo))
 	games, err := getGames()
 	if err != nil {
 		fmt.Printf("%s %s\n", red(IconBad), "获取比赛列表失败")

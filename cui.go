@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"strings"
 	"time"
 
 	figure "github.com/common-nighthawk/go-figure"
@@ -71,7 +72,7 @@ func update(ui tui.UI, homeLabel, visitLabel, liveLabel *tui.Label, liveBox *tui
 						if lt, err := time.Parse("2006-01-02 15:04:05", record.LiveTime); err == nil {
 							liveTime = lt.Format("15:04")
 						}
-						text := fmt.Sprintf("%s(%s): %s", record.UserChn, liveTime, record.LiveText)
+						text := fmt.Sprintf("%s(%s): %s", record.UserChn, liveTime, strings.TrimSpace(record.LiveText))
 						liveLabel.SetText(text + "\n" + liveLabel.Text())
 					}
 				}
