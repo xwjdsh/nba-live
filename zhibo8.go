@@ -11,7 +11,7 @@ import (
 )
 
 func getGames() ([]*Game, error) {
-	res, err := http.Get("https://bifen4m.qiumibao.com/json/list.htm")
+	res, err := http.Get("http://bifen4m.qiumibao.com/json/list.htm")
 	if err != nil {
 		return nil, err
 	}
