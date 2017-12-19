@@ -38,10 +38,11 @@ docker pull wendellsun/nba-live
 docker run -it --rm wendellsun/nba-live
 ```
 #### Manual
-从[releases](https://github.com/xwjdsh/nba-live/releases)下载可执行文件并将其放到`PATH`环境变量中，然后在终端输入`nba-live`运行。
+从[releases](https://github.com/xwjdsh/nba-live/releases)下载可执行文件并将其放到`PATH`环境变量对应的路径中，然后在终端输入`nba-live`运行。
 
 ## 致谢
-* [xxhomey19/nba-go](https://github.com/xxhomey19/nba-go)
+* [manifoldco/promptui](https://github.com/manifoldco/promptui)
+* [marcusolsson/tui-go](https://github.com/marcusolsson/tui-go)
 * [基于Python命令行的NBA文字直播小工具](http://www.jianshu.com/p/b4077b8810bd)
 
 ## 协议
