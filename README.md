@@ -1,7 +1,23 @@
-# nba-live
+```text
+          __                ___          
+   ____  / /_  ____ _      / (_)   _____ 
+  / __ \/ __ \/ __ `/_____/ / / | / / _ \
+ / / / / /_/ / /_/ /_____/ / /| |/ /  __/
+/_/ /_/_.___/\__,_/     /_/_/ |___/\___/ 
+```
+[![Release](http://github-release-version.herokuapp.com/github/xwjdsh/nba-live/release.svg?style=flat)](https://github.com/xwjdsh/nba-live/releases/latest)
+[![Build Status](https://travis-ci.org/xwjdsh/nba-live.svg?branch=master)](https://travis-ci.org/xwjdsh/nba-live)
+[![Go Report Card](https://goreportcard.com/badge/github.com/xwjdsh/nba-live)](https://goreportcard.com/report/github.com/xwjdsh/nba-live)
+[![](https://images.microbadger.com/badges/image/wendellsun/nba-live.svg)](https://microbadger.com/images/wendellsun/nba-live)
+[![DUB](https://img.shields.io/dub/l/vibe-d.svg)](https://github.com/xwjdsh/manssh/blob/master/LICENSE)
+
 `nba-live`是一个在终端下观看`NBA&CBA`文字直播的命令行工具.
 
 所有数据来自[手机版直播吧](https://m.zhibo8.cc/).
+
+## 截图
+![](https://raw.githubusercontent.com/xwjdsh/nba-live/master/screenshot/nba-live-select.png)
+![](https://raw.githubusercontent.com/xwjdsh/nba-live/master/screenshot/nba-live-cui.png)
 
 ## 安装运行
 #### Go
